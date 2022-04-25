@@ -7,32 +7,36 @@ services:
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - ./sql:/sql/
     env_file:
       - ./.env
     ports:
-      - "5433:5432"
+      - 5434:5432
   redis:
     image: redis:alpine
     container_name: dtb_redis
   web:
     build: .
     container_name: dtb_django
-    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python manage.py runserver 0.0.0.0:8001"
     volumes:
       - .:/code
     ports:
-      - "8000:8000"
+      - "8001:8000"
+    environment:
+      - DJANGO_DEBUG='True'
     env_file:
       - ./.env
     depends_on:
       - db
+      - redis
+    entrypoint: /entrypoint.sh
   bot:
     build: .
     container_name: dtb_bot
     command: python run_pooling.py
+    volumes:
+      - .:/code
     env_file:
       - ./.env
     depends_on:
@@ -51,7 +55,7 @@ services:
   celery-beat:
     build: .
     container_name: dtb_beat
-    command: celery -A dtb beat -l info --scheduler django_celery_beat.schedulers.DatabaseScheduler
+    command: celery -A dtb beat --loglevel=INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
     volumes:
       - .:/code
     env_file:

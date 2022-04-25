@@ -1,3 +1,41 @@
+Skip to content
+Search or jump to…
+Pull requests
+Issues
+Marketplace
+Explore
+
+@KostyaArent
+UNREALre
+/
+PoetryBot
+Public
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+Insights
+PoetryBot/.gitignore
+
+Alexander Podrabinovich Initial commit.
+Latest commit 9994083 on 19 Jun 2021
+ History
+ 0 contributors
+146 lines (117 sloc)  1.9 KB
+
+staticfiles/*
+!staticfiles/.keep
+
+media/*
+!media/.keep
+
+logs/*
+# exception to the rule
+!logs/.keep
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -60,7 +98,6 @@ coverage.xml
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-dtb/static
 
 # Flask stuff:
 instance/
@@ -110,7 +147,6 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-dtb_venv/
 
 # Spyder project settings
 .spyderproject
@@ -136,3 +172,16 @@ dmypy.json
 
 #Docker
 .Dockerfile.swp
+© 2022 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+Loading complete

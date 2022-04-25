@@ -76,7 +76,10 @@ class User(CreateUpdateTracker):
 
 
 class Location(CreateTracker):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
     latitude = models.FloatField()
     longitude = models.FloatField()
 
@@ -93,3 +96,44 @@ class Location(CreateTracker):
             save_data_from_arcgis(latitude=self.latitude, longitude=self.longitude, location_id=self.pk)
         else:
             save_data_from_arcgis.delay(latitude=self.latitude, longitude=self.longitude, location_id=self.pk)
+
+
+class Game(models.Model):
+    title = models.CharField(
+        max_length=20,
+        unique=True,
+        verbose_name='Title of the game',
+    )
+
+    class Meta:
+        verbose_name = "Game"
+        verbose_name_plural = "Games"
+
+    def __str__(self):
+        return self.title
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        primary_key=True,
+    )
+    steam_nickname = models.TextField(
+            verbose_name='Steam nickname',
+            blank=True,
+    )
+    game = models.ForeignKey(
+        Game,
+        verbose_name='Main game',
+        on_delete=models.PROTECT,
+        null = True,
+    )
+    in_search = models.BooleanField(
+        verbose_name='In search',
+        default=False
+    )
+
+    class Meta:
+        verbose_name = 'Profile'
+        verbose_name_plural = 'Profiles'

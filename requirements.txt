@@ -1,17 +1,20 @@
 pytz
 requests
 python-dotenv
+click
 ipython
 
 # Django
 django
-django-timezone-field 
+django-cleanup
+django-timezone-field
 django-cors-headers
+pillow=8.2.0
 django-debug-toolbar
 whitenoise
 
 # Django 3.0 async requirements
-gunicorn
+gunicorn==20.1.0
 uvicorn
 uvloop
 httptools
@@ -21,7 +24,7 @@ psycopg2-binary
 dj-database-url
 
 # Distributed tasks
-celery
+celery==5.0.5
 redis
 django-celery-beat
 

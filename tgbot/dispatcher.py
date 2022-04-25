@@ -95,15 +95,6 @@ def run_pooling():
     updater.idle()
 
 
-# Global variable - best way I found to init Telegram bot
-bot = Bot(TELEGRAM_TOKEN)
-try:
-    TELEGRAM_BOT_USERNAME = bot.get_me()["username"]
-except telegram.error.Unauthorized:
-    logging.error(f"Invalid TELEGRAM_TOKEN.")
-    sys.exit(1)
-
-
 @app.task(ignore_result=True)
 def process_telegram_event(update_json):
     update = Update.de_json(update_json, bot)
@@ -155,10 +146,11 @@ def set_up_commands(bot_instance: Bot) -> None:
             ]
         )
 
-
+bot = telegram.Bot(TELEGRAM_TOKEN)
 # WARNING: it's better to comment the line below in DEBUG mode.
 # Likely, you'll get a flood limit control error, when restarting bot too often
 set_up_commands(bot)
 
-n_workers = 0 if DEBUG else 4
-dispatcher = setup_dispatcher(Dispatcher(bot, update_queue=None, workers=n_workers, use_context=True))
+# Global variable - best way I found to init Telegram bot
+dispatcher = setup_dispatcher(Dispatcher(bot, None, workers=0, use_context=True))
+TELEGRAM_BOT_USERNAME = bot.get_me()["username"]
