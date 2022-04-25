@@ -19,6 +19,7 @@ from dtb.settings import TELEGRAM_TOKEN, DEBUG
 from tgbot.handlers.utils import files, error
 from tgbot.handlers.admin import handlers as admin_handlers
 from tgbot.handlers.location import handlers as location_handlers
+from tgbot.handlers.wpassist import handlers as wpassist_handlers
 from tgbot.handlers.onboarding import handlers as onboarding_handlers
 from tgbot.handlers.broadcast_message import handlers as broadcast_handlers
 from tgbot.handlers.onboarding.manage_data import SECRET_LEVEL_BUTTON
@@ -41,6 +42,10 @@ def setup_dispatcher(dp):
     # location
     dp.add_handler(CommandHandler("ask_location", location_handlers.ask_for_location))
     dp.add_handler(MessageHandler(Filters.location, location_handlers.location_handler))
+
+    # wpassist
+    dp.add_handler(CommandHandler("go", wpassist_handlers.go))
+    dp.add_handler(MessageHandler(Filters.regex('^Edit$'), wpassist_handlers.edit))
 
     # secret level
     dp.add_handler(CallbackQueryHandler(onboarding_handlers.secret_level, pattern=f"^{SECRET_LEVEL_BUTTON}"))
@@ -108,6 +113,7 @@ def set_up_commands(bot_instance: Bot) -> None:
             'stats': 'Statistics of bot 📊',
             'admin': 'Show admin info ℹ️',
             'ask_location': 'Send location 📍',
+            'go': 'WP Assist 👥',
             'broadcast': 'Broadcast message 📨',
             'export_users': 'Export users.csv 👥',
         },
@@ -116,6 +122,7 @@ def set_up_commands(bot_instance: Bot) -> None:
             'stats': 'Estadísticas de bot 📊',
             'admin': 'Mostrar información de administrador ℹ️',
             'ask_location': 'Enviar ubicación 📍',
+            'go': 'WP Asistir 👥',
             'broadcast': 'Mensaje de difusión 📨',
             'export_users': 'Exportar users.csv 👥',
         },
@@ -124,6 +131,7 @@ def set_up_commands(bot_instance: Bot) -> None:
             'stats': 'Statistiques du bot 📊',
             'admin': "Afficher les informations d'administrateur ℹ️",
             'ask_location': 'Envoyer emplacement 📍',
+            'go': 'WP Aider 👥',
             'broadcast': 'Message de diffusion 📨',
             "export_users": 'Exporter users.csv 👥',
         },
@@ -133,6 +141,7 @@ def set_up_commands(bot_instance: Bot) -> None:
             'admin': 'Показать информацию для админов ℹ️',
             'broadcast': 'Отправить сообщение 📨',
             'ask_location': 'Отправить локацию 📍',
+            'go': 'WP Ассистент 👥',
             'export_users': 'Экспорт users.csv 👥',
         }
     }
