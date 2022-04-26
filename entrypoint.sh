@@ -4,6 +4,9 @@
 echo "Applying database migrations ..."
 python manage.py migrate
 
+# Adding games to base
+echo "Adding games to database ..."
+python games_add_to_base.py
 # Create superuser
 echo "Creating superuser ..."
 python manage.py createsuperuser --noinput

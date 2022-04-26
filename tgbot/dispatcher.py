@@ -5,12 +5,14 @@ import sys
 import logging
 from typing import Dict
 
+
 import telegram.error
+from telegram.utils.request import Request
 from telegram import Bot, Update, BotCommand
 from telegram.ext import (
     Updater, Dispatcher, Filters,
     CommandHandler, MessageHandler,
-    CallbackQueryHandler,
+    CallbackQueryHandler, ConversationHandler
 )
 
 from dtb.celery import app  # event processing in async mode
@@ -22,7 +24,7 @@ from tgbot.handlers.location import handlers as location_handlers
 from tgbot.handlers.wpassist import handlers as wpassist_handlers
 from tgbot.handlers.onboarding import handlers as onboarding_handlers
 from tgbot.handlers.broadcast_message import handlers as broadcast_handlers
-from tgbot.handlers.onboarding.manage_data import SECRET_LEVEL_BUTTON
+from tgbot.handlers.onboarding.manage_data import WP_ASSIST
 from tgbot.handlers.broadcast_message.manage_data import CONFIRM_DECLINE_BROADCAST
 from tgbot.handlers.broadcast_message.static_text import broadcast_command
 
@@ -44,11 +46,15 @@ def setup_dispatcher(dp):
     dp.add_handler(MessageHandler(Filters.location, location_handlers.location_handler))
 
     # wpassist
+    dp.add_handler(MessageHandler(Filters.regex('^Remove me from search$'), wpassist_handlers.in_search_off))
+    dp.add_handler(MessageHandler(Filters.regex('^Add me to search$'), wpassist_handlers.in_search_on))
+    dp.add_handler(MessageHandler(Filters.regex('^Go$'), wpassist_handlers.go))
     dp.add_handler(CommandHandler("go", wpassist_handlers.go))
-    dp.add_handler(MessageHandler(Filters.regex('^Edit$'), wpassist_handlers.edit))
+    dp.add_handler(wpassist_handlers.find_handler)
+    dp.add_handler(wpassist_handlers.profile_handler)
 
-    # secret level
-    dp.add_handler(CallbackQueryHandler(onboarding_handlers.secret_level, pattern=f"^{SECRET_LEVEL_BUTTON}"))
+    # wp assist main menu button
+    dp.add_handler(CallbackQueryHandler(onboarding_handlers.wp_assist, pattern=f"^{WP_ASSIST}"))
 
     # broadcast message
     dp.add_handler(
@@ -65,18 +71,6 @@ def setup_dispatcher(dp):
 
     # handling errors
     dp.add_error_handler(error.send_stacktrace_to_tg_chat)
-
-    # EXAMPLES FOR HANDLERS
-    # dp.add_handler(MessageHandler(Filters.text, <function_handler>))
-    # dp.add_handler(MessageHandler(
-    #     Filters.document, <function_handler>,
-    # ))
-    # dp.add_handler(CallbackQueryHandler(<function_handler>, pattern="^r\d+_\d+"))
-    # dp.add_handler(MessageHandler(
-    #     Filters.chat(chat_id=int(TELEGRAM_FILESTORAGE_ID)),
-    #     # & Filters.forwarded & (Filters.photo | Filters.video | Filters.animation),
-    #     <function_handler>,
-    # ))
 
     return dp
 
@@ -109,38 +103,38 @@ def process_telegram_event(update_json):
 def set_up_commands(bot_instance: Bot) -> None:
     langs_with_commands: Dict[str, Dict[str, str]] = {
         'en': {
-            'start': 'Start django bot 🚀',
-            'stats': 'Statistics of bot 📊',
-            'admin': 'Show admin info ℹ️',
-            'ask_location': 'Send location 📍',
+            'start': 'Start bot 🚀',
+            # 'stats': 'Statistics of bot 📊',
+            # 'admin': 'Show admin info ℹ️',
+            # 'ask_location': 'Send location 📍',
             'go': 'WP Assist 👥',
-            'broadcast': 'Broadcast message 📨',
+            # 'broadcast': 'Broadcast message 📨',
             'export_users': 'Export users.csv 👥',
         },
         'es': {
-            'start': 'Iniciar el bot de django 🚀',
-            'stats': 'Estadísticas de bot 📊',
-            'admin': 'Mostrar información de administrador ℹ️',
-            'ask_location': 'Enviar ubicación 📍',
+            'start': 'Iniciar el bot de 🚀',
+            # 'stats': 'Estadísticas de bot 📊',
+            # 'admin': 'Mostrar información de administrador ℹ️',
+            # 'ask_location': 'Enviar ubicación 📍',
             'go': 'WP Asistir 👥',
-            'broadcast': 'Mensaje de difusión 📨',
+            # 'broadcast': 'Mensaje de difusión 📨',
             'export_users': 'Exportar users.csv 👥',
         },
         'fr': {
-            'start': 'Démarrer le bot Django 🚀',
-            'stats': 'Statistiques du bot 📊',
-            'admin': "Afficher les informations d'administrateur ℹ️",
-            'ask_location': 'Envoyer emplacement 📍',
+            'start': 'Démarrer le bot 🚀',
+            # 'stats': 'Statistiques du bot 📊',
+            # 'admin': "Afficher les informations d'administrateur ℹ️",
+            # 'ask_location': 'Envoyer emplacement 📍',
             'go': 'WP Aider 👥',
-            'broadcast': 'Message de diffusion 📨',
+            # 'broadcast': 'Message de diffusion 📨',
             "export_users": 'Exporter users.csv 👥',
         },
         'ru': {
-            'start': 'Запустить django бота 🚀',
-            'stats': 'Статистика бота 📊',
-            'admin': 'Показать информацию для админов ℹ️',
-            'broadcast': 'Отправить сообщение 📨',
-            'ask_location': 'Отправить локацию 📍',
+            'start': 'Запустить бота 🚀',
+            # 'stats': 'Статистика бота 📊',
+            # 'admin': 'Показать информацию для админов ℹ️',
+            # 'broadcast': 'Отправить сообщение 📨',
+            # 'ask_location': 'Отправить локацию 📍',
             'go': 'WP Ассистент 👥',
             'export_users': 'Экспорт users.csv 👥',
         }
@@ -155,7 +149,13 @@ def set_up_commands(bot_instance: Bot) -> None:
             ]
         )
 
-bot = telegram.Bot(TELEGRAM_TOKEN)
+#Flood control :(
+request = Request(
+    connect_timeout=6.0,
+    read_timeout=6.0,
+)
+
+bot = telegram.Bot(request=request, token=TELEGRAM_TOKEN)
 # WARNING: it's better to comment the line below in DEBUG mode.
 # Likely, you'll get a flood limit control error, when restarting bot too often
 set_up_commands(bot)

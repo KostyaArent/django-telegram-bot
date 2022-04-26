@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 from dtb.settings import DEBUG
 
-from tgbot.models import Location
+from tgbot.models import Location, Game, Profile
 from tgbot.models import User
 from tgbot.forms import BroadcastForm
 
@@ -15,7 +15,7 @@ from tgbot.handlers.broadcast_message.utils import _send_message
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = [
-        'user_id', 'username', 'first_name', 'last_name', 
+        'user_id', 'username', 'first_name', 'last_name',
         'language_code', 'deep_link',
         'created_at', 'updated_at', "is_blocked_bot",
     ]
@@ -52,3 +52,15 @@ class UserAdmin(admin.ModelAdmin):
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
     list_display = ['id', 'user_id', 'created_at']
+
+
+class GameAdmin(admin.ModelAdmin):
+    list_display = ['id', 'title']
+
+
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ['user', 'steam_nickname', 'game', 'in_search']
+
+
+admin.site.register(Game, GameAdmin)
+admin.site.register(Profile, ProfileAdmin)
