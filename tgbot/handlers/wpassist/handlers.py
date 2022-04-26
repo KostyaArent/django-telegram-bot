@@ -113,7 +113,7 @@ def confirmation(update: Update, context: CallbackContext) -> Callable:
     )
     prof.in_search = True
     prof.save()
-    update.message.reply_text(fine + " " choose_action, reply_markup=send_wpassist_create_keyboard())
+    update.message.reply_text(fine + " " + choose_action, reply_markup=send_wpassist_create_keyboard())
     return ConversationHandler.END
 
 
@@ -185,7 +185,7 @@ def teammate_game(update: Update, context: CallbackContext) -> Callable:
         bot.send_message(user.user_id, f'You teammate for {teammate_game.title}:\n{teammate.get("steam_nickname")}', reply_markup=send_find_keyboard())
         return NEXT
     else:
-        bot.send_message(user.user_id, no_body')
+        bot.send_message(user.user_id, no_body)
         return ConversationHandler.END
 
 
