@@ -15,7 +15,7 @@ from tgbot.handlers.wpassist.static_text import (
     go, nick_name, primary_game,
     excluded, included, choose_action,
     lets_edit, choose_game, bye,
-    open_username, no_body
+    open_username, no_body, fine
     )
 
 from tgbot.handlers.wpassist.keyboards import (
@@ -113,7 +113,7 @@ def confirmation(update: Update, context: CallbackContext) -> Callable:
     )
     prof.in_search = True
     prof.save()
-    update.message.reply_text(fine + " " + choose_action, reply_markup=send_wpassist_create_keyboard())
+    update.message.reply_text(fine + " " + choose_action, reply_markup=send_wpassist_keyboard(prof.in_search))
     return ConversationHandler.END
 
 
