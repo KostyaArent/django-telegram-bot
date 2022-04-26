@@ -4,12 +4,13 @@
 echo "Applying database migrations ..."
 python manage.py migrate
 
-# Adding games to base
-echo "Adding games to database ..."
-python manage.py shell games_add_to_base.py
 # Create superuser
 echo "Creating superuser ..."
 python manage.py createsuperuser --noinput
+
+# Adding games to base
+echo "Adding games to database ..."
+python manage.py runscript tgbot_games_add_to_base --dir-policy each
 
 # Load initial data (fixtures)
 echo "Load initial data"

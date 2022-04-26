@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'arcgis',
 
     'django_cleanup',
+
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
