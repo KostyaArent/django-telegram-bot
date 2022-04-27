@@ -2,10 +2,16 @@ import logging
 import os
 import sys
 
-import dj_database_url
+# import dj_database_url
 import dotenv
 
 from pathlib import Path
+
+
+if "DATABASE_URL" in os.environ:
+    import dj_database_url
+    DATABASES = {"default": dj_database_url.config()}
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -97,10 +103,15 @@ ASGI_APPLICATION = 'dtb.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600),
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase',
+    }
 }
+# DATABASES = {
+#     'default': dj_database_url.config(),
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
