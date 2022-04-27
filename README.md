@@ -1,12 +1,15 @@
 # django-telegram-bot
-Sexy Django + python-telegram-bot + Celery + Redis + Postgres + Dokku + GitHub Actions template. Production-ready Telegram bot with database, admin panel and a bunch of useful built-in methods.
+Django  
+python-telegram-bot
+Celery
+Redis
+Postgres  
+Dokku  
+GitHub Actions template
 
-[![Sparkline](https://stars.medv.io/Naereen/badges.svg)](https://stars.medv.io/Naereen/badges)
+Production-ready Telegram bot with database admin panel and a bunch of useful built-in methods.
 
-
-### Check the example bot that uses the code from Main branch: [t.me/djangotelegrambot](https://t.me/djangotelegrambot)
-
-## Features
+# Features
 
 * Database: Postgres, Sqlite3, MySQL - you decide!
 * Admin panel (thanks to [Django](https://docs.djangoproject.com/en/3.1/intro/tutorial01/))
@@ -20,65 +23,18 @@ Sexy Django + python-telegram-bot + Celery + Redis + Postgres + Dokku + GitHub A
 Built-in Telegram bot methods:
 * `/broadcast` — send message to all users (admin command)
 * `/export_users` — bot sends you info about your users in .csv file (admin command)
-* `/stats` — show basic bot stats 
+* `/stats` — show basic bot stats
 * `/ask_for_location` — log user location when received and reverse geocode it to get country, city, etc.
+* `/go` — well play assist menu. Teammate Search Assistant.
 
-Check out our [Wiki](https://github.com/ohld/django-telegram-bot/wiki) for more info.
-
-# How to run
-
-## Quickstart: Pooling & SQLite
-
-The fastest way to run the bot is to run it in pooling mode using SQLite database without all Celery workers for background jobs. This should be enough for quickstart:
-
-``` bash
-git clone https://github.com/ohld/django-telegram-bot
-cd django-telegram-bot
-```
-
-Create virtual environment (optional)
-``` bash
-python3 -m venv dtb_venv
-source dtb_venv/bin/activate
-```
-
-Install all requirements:
-```
-pip install -r requirements.txt
-```
-
-Create `.env` file in root directory and copy-paste this:
-``` bash 
-DJANGO_DEBUG=True
-DATABASE_URL=sqlite:///db.sqlite3
-TELEGRAM_TOKEN=<ENTER YOUR TELEGRAM TOKEN HERE>
-```
-
-Run migrations to setup SQLite database:
-``` bash
-python manage.py migrate
-```
-
-Create superuser to get access to admin panel:
-``` bash
-python manage.py createsuperuser
-```
-
-Run bot in pooling mode:
-``` bash
-python run_pooling.py 
-```
-
-If you want to open Django admin panel which will be located on http://localhost:8000/tgadmin/:
-``` bash
-python manage.py runserver
-```
+# Original
+Original project https://github.com/ohld/django-telegram-bot/
 
 ## Run locally using docker-compose
 
 If you like docker-compose you can check [full instructions in our Wiki](https://github.com/ohld/django-telegram-bot/wiki/Run-locally-using-Docker-compose).
 
-## Deploy to Production 
+## Deploy to Production
 
 Read Wiki page on how to [deploy production-ready](https://github.com/ohld/django-telegram-bot/wiki/Production-Deployment-using-Dokku) scalable Telegram bot using Dokku.
 
