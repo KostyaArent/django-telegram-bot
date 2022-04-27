@@ -1,7 +1,6 @@
 pytz
 requests
 python-dotenv
-click
 ipython
 
 # Django
