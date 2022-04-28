@@ -24,7 +24,8 @@ SECRET_KEY = os.getenv(
     'x%#3&%giwv8f0+%r946en7zd;kfzjhoi;3j=0y4j3lsjZNGD;onhw2p9',
 )
 
-DEBUG = not not os.getenv("DJANGO_DEBUG", False)
+# DEBUG = not not os.getenv("DJANGO_DEBUG", False)
+DEBUG = False
 
 ALLOWED_HOSTS = ["*",]  # since Telegram uses a lot of IPs for webhooks
 
