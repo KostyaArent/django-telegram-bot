@@ -26,7 +26,7 @@ Latest commit 9994083 on 19 Jun 2021
  0 contributors
 146 lines (117 sloc)  1.9 KB
 
-staticfiles/*
+# staticfiles/*
 !staticfiles/.keep
 
 media/*
