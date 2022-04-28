@@ -7,7 +7,6 @@ from typing import Dict
 
 
 import telegram.error
-from telegram.utils.request import Request
 from telegram import Bot, Update, BotCommand
 from telegram.ext import (
     Updater, Dispatcher, Filters,
@@ -149,13 +148,8 @@ def set_up_commands(bot_instance: Bot) -> None:
             ]
         )
 
-#Flood control :(
-request = Request(
-    connect_timeout=6.0,
-    read_timeout=6.0,
-)
 
-bot = telegram.Bot(request=request, token=TELEGRAM_TOKEN)
+bot = telegram.Bot(token=TELEGRAM_TOKEN)
 # WARNING: it's better to comment the line below in DEBUG mode.
 # Likely, you'll get a flood limit control error, when restarting bot too often
 set_up_commands(bot)
