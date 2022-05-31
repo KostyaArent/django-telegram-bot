@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 from dtb.settings import DEBUG
 
-from tgbot.models import Location, Game, Profile
+from tgbot.models import Location, Vacancy, Profile, EmployeeValues, Experience
 from tgbot.models import User
 from tgbot.forms import BroadcastForm
 
@@ -54,13 +54,16 @@ class LocationAdmin(admin.ModelAdmin):
     list_display = ['id', 'user_id', 'created_at']
 
 
-class GameAdmin(admin.ModelAdmin):
+class VacancyAdmin(admin.ModelAdmin):
     list_display = ['id', 'title']
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'steam_nickname', 'game', 'in_search']
+    list_display = ['user', 'name_family', 'working', 'salary_await', 'emp_values', 'exp']
 
 
-admin.site.register(Game, GameAdmin)
+admin.site.register(Vacancy, VacancyAdmin)
 admin.site.register(Profile, ProfileAdmin)
+admin.site.register(EmployeeValues)
+admin.site.register(Experience)
+

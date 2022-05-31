@@ -47,7 +47,7 @@ def setup_dispatcher(dp):
     # wpassist
     dp.add_handler(MessageHandler(Filters.regex('^Remove me from search$'), wpassist_handlers.in_search_off))
     dp.add_handler(MessageHandler(Filters.regex('^Add me to search$'), wpassist_handlers.in_search_on))
-    dp.add_handler(MessageHandler(Filters.regex('^Go$'), wpassist_handlers.go))
+    dp.add_handler(MessageHandler(Filters.regex('^Начать$'), wpassist_handlers.go))
     dp.add_handler(CommandHandler("go", wpassist_handlers.go))
     dp.add_handler(wpassist_handlers.find_handler)
     dp.add_handler(wpassist_handlers.profile_handler)
@@ -106,7 +106,7 @@ def set_up_commands(bot_instance: Bot) -> None:
             # 'stats': 'Statistics of bot 📊',
             # 'admin': 'Show admin info ℹ️',
             # 'ask_location': 'Send location 📍',
-            'go': 'WP Assist 👥',
+            #'go': 'WP Assist 👥',
             # 'broadcast': 'Broadcast message 📨',
             'export_users': 'Export users.csv 👥',
         },
@@ -115,7 +115,7 @@ def set_up_commands(bot_instance: Bot) -> None:
             # 'stats': 'Estadísticas de bot 📊',
             # 'admin': 'Mostrar información de administrador ℹ️',
             # 'ask_location': 'Enviar ubicación 📍',
-            'go': 'WP Asistir 👥',
+            #'go': 'WP Asistir 👥',
             # 'broadcast': 'Mensaje de difusión 📨',
             'export_users': 'Exportar users.csv 👥',
         },
@@ -124,7 +124,7 @@ def set_up_commands(bot_instance: Bot) -> None:
             # 'stats': 'Statistiques du bot 📊',
             # 'admin': "Afficher les informations d'administrateur ℹ️",
             # 'ask_location': 'Envoyer emplacement 📍',
-            'go': 'WP Aider 👥',
+            #'go': 'WP Aider 👥',
             # 'broadcast': 'Message de diffusion 📨',
             "export_users": 'Exporter users.csv 👥',
         },
@@ -134,7 +134,7 @@ def set_up_commands(bot_instance: Bot) -> None:
             # 'admin': 'Показать информацию для админов ℹ️',
             # 'broadcast': 'Отправить сообщение 📨',
             # 'ask_location': 'Отправить локацию 📍',
-            'go': 'WP Ассистент 👥',
+            #'go': 'WP Ассистент 👥',
             'export_users': 'Экспорт users.csv 👥',
         }
     }
@@ -152,7 +152,7 @@ def set_up_commands(bot_instance: Bot) -> None:
 bot = telegram.Bot(token=TELEGRAM_TOKEN)
 # WARNING: it's better to comment the line below in DEBUG mode.
 # Likely, you'll get a flood limit control error, when restarting bot too often
-set_up_commands(bot)
+# set_up_commands(bot)
 
 # Global variable - best way I found to init Telegram bot
 dispatcher = setup_dispatcher(Dispatcher(bot, None, workers=0, use_context=True))

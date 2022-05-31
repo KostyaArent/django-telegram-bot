@@ -11,6 +11,7 @@ from tgbot.handlers.onboarding.keyboards import (
     make_keyboard_for_start_command, send_go_keyboard,
     make_keyboard_for_wp_assist_start
     )
+from tgbot.handlers.wpassist.keyboards import send_wpassist_create_keyboard
 
 
 def command_start(update: Update, context: CallbackContext) -> None:
@@ -31,4 +32,5 @@ def wp_assist(update: Update, context: CallbackContext) -> None:
     bot = context.bot
     bot.answer_callback_query(query.id)
     bot.editMessageReplyMarkup(user_id, query.message.message_id)
-    bot.send_message(user_id, 'Run WP assist?', reply_markup=send_go_keyboard())
+    # bot.send_message(user_id, 'Отлично! Давайте начнем интервью?', reply_markup=send_go_keyboard())
+    bot.send_message(user_id, 'Отлично! Давайте начнем интервью?', reply_markup=send_wpassist_create_keyboard())

@@ -4,13 +4,22 @@ from telegram import (
     )
 
 from tgbot.handlers.wpassist.static_text import edit_profile
-from tgbot.models import Game
+from tgbot.models import Vacancy
 
 
 def build_keyboard(query, name_key, date_key) -> InlineKeyboardMarkup:
     """Helper function to build the next inline keyboard."""
     return InlineKeyboardMarkup.from_column(
         [InlineKeyboardButton(item[name_key], callback_data=str(item[date_key]), title=item[name_key], number=item[date_key]) for item in query]
+    )
+
+
+def exp_select_keyboard() -> ReplyKeyboardMarkup:
+    keys = [['Да', 'Нет']]
+    return ReplyKeyboardMarkup(
+        keys,
+        one_time_keyboard=True,
+        resize_keyboard=True
     )
 
 
@@ -26,7 +35,7 @@ def send_wpassist_keyboard(status: bool) -> ReplyKeyboardMarkup:
 
 def send_wpassist_create_keyboard() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
-        [['Edit profile']],
+        [['Заполнить анкету']],
         one_time_keyboard=True,
         resize_keyboard=True
     )

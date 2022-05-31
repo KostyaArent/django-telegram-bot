@@ -1,0 +1,39 @@
+{% extends 'tgbot/base.html' %}
+
+{% block content %}
+
+       <!-- Sign In Start -->
+       <div class="container-fluid">
+           <div class="row h-100 align-items-center justify-content-center" style="min-height: 100vh;">
+               <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
+                   <div class="bg-light rounded p-4 p-sm-5 my-4 mx-3">
+                       <div class="d-flex align-items-center justify-content-between mb-3">
+                           <a href="index.html" class="">
+                               <h3 class="text-primary"><i class="fa fa-hashtag me-2"></i>TGBOT</h3>
+                           </a>
+                           <h4>Sign In</h4>
+                       </div>
+                       <form method="POST">
+                         {% csrf_token %}
+                         <div class="form-floating mb-3">
+                            {{ form.username }}
+                            <label for="floatingInput">Login</label>
+                         </div>
+                         <div class="form-floating mb-4">
+                           {{ form.password }}
+                           <label for="floatingPassword">Password</label>
+                         </div>
+                         <button type="submit" class="btn btn-primary py-3 w-100 mb-4">Sign In</button>
+                       </form>
+                       {% if error %}
+                         <p class="text-center mb-0" style="color:red">{{ error }}</p>
+                         <br>
+                       {% endif %}
+                       <p class="text-center mb-0">Don't have an Account? <br><a href="">Sign Up</a></p>
+                   </div>
+               </div>
+           </div>
+       </div>
+       <!-- Sign In End -->
+
+{% endblock %}

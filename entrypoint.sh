@@ -2,18 +2,18 @@
 
 # Apply database migrations
 echo "Applying database migrations ..."
-python manage.py migrate
+python manage.py makemigrations --noinput && python manage.py migrate --noinput
 
 # Create superuser
 echo "Creating superuser ..."
 python manage.py createsuperuser --noinput
 
 # Adding games to base
-echo "Adding games to database ..."
-python manage.py runscript tgbot_games_add_to_base --dir-policy each
+# echo "Adding empl_values to database ..."
+# python manage.py runscript tgbot_empl_val_add_to_base --dir-policy each
 
 # Load initial data (fixtures)
-echo "Load initial data"
+# echo "Load initial data"
 # python manage.py loaddata MyFixture.json
 
 # Collecting static

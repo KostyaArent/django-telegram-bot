@@ -1,0 +1,50 @@
+{% extends 'tgbot/base.html' %}
+
+{% block content %}
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+<!-- User's own Start -->
+
+      <div class="col-sm-12 col-xl-6">
+        <div class="bg-light rounded h-100 p-4">
+
+           <h6 class="mb-4">Анкета {{ profile.name_family }}</h6>
+           <hr>
+           <dl class="row mb-0">
+                <dt class="col-sm-4">Статус</dt>
+               <dd class="col-sm-8"><strong>{{ profile.get_status_display }}</strong></dd>
+
+               <dt class="col-sm-4">Телеграм</dt>
+               <dd class="col-sm-8">{{ profile.user }}</dd>
+
+               <dt class="col-sm-4">Телеграм ID:</dt>
+               <dd class="col-sm-8">{{ profile.pk }}</dd>
+
+               <dt class="col-sm-4">Телефон:</dt>
+               <dd class="col-sm-8"><a href="tel:{{ profile.phone }}">{{ profile.phone }}</a></dd>
+
+               <dt class="col-sm-4">Причина поиска:</dt>
+               <dd class="col-sm-8">{{ profile.working }}</dd>
+
+               <dt class="col-sm-4">Ожидаемая ЗП:</dt>
+               <dd class="col-sm-8">{{ profile.salary_await }}</dd>
+
+               <dt class="col-sm-4">Ценности:</dt>
+               <dd class="col-sm-8">{{ profile.emp_values|safe }}</dd>
+
+               <dt class="col-sm-4">Опыт:</dt>
+               <dd class="col-sm-8">{{ profile.exp|safe }}</dd>
+
+               <dt class="col-sm-4">Edited date:</dt>
+               <dd class="col-sm-8">{{ profile.changed_date }}</dd>
+
+               <dt class="row-sm-4">Photos:</dt>
+
+           </dl>
+           <hr>
+       </div>
+    </div>
+  </div>
+</div>
+<!-- User's own End -->
+{% endblock %}

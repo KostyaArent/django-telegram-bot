@@ -21,7 +21,7 @@ def _get_csv_from_qs_values(queryset: QuerySet[Dict], filename: str = 'users'):
     buf = io.BytesIO()
 
     # extract csv-string, convert it to bytes and write to buffer
-    buf.write(s.getvalue().encode())
+    buf.write(s.getvalue().encode("utf8"))
     buf.seek(0)
 
     # set a filename with file's extension

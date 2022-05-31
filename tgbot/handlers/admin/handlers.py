@@ -6,7 +6,7 @@ from telegram.ext import CallbackContext
 
 from tgbot.handlers.admin import static_text
 from tgbot.handlers.admin.utils import _get_csv_from_qs_values
-from tgbot.models import User
+from tgbot.models import User, Profile
 
 
 def admin(update: Update, context: CallbackContext) -> None:
@@ -44,6 +44,6 @@ def export_users(update: Update, context: CallbackContext) -> None:
         return
 
     # in values argument you can specify which fields should be returned in output csv
-    users = User.objects.all().values()
+    users = Profile.objects.all().values()
     csv_users = _get_csv_from_qs_values(users)
     context.bot.send_document(chat_id=u.user_id, document=csv_users)

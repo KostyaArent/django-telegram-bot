@@ -6,7 +6,7 @@ from tgbot.handlers.onboarding.static_text import github_button_text, wp_assist_
 
 def make_keyboard_for_start_command() -> InlineKeyboardMarkup:
     buttons = [[
-        InlineKeyboardButton(github_button_text, url="https://github.com/KostyaArent"),
+        InlineKeyboardButton(github_button_text, url="https://kazan.1cbit.ru"),
         InlineKeyboardButton(wp_assist_button_text, callback_data=f'{WP_ASSIST}')
     ]]
 
@@ -15,14 +15,14 @@ def make_keyboard_for_start_command() -> InlineKeyboardMarkup:
 
 def send_go_keyboard() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
-        [['Go']],
+        [['Начать']],
         one_time_keyboard=True,
         resize_keyboard=True
     )
 
 def make_keyboard_for_wp_assist_start() -> InlineKeyboardMarkup:
     buttons = [[
-        InlineKeyboardButton('Go!', callback_data=f'/go')
+        InlineKeyboardButton('Начать', callback_data=f'/edit')
     ]]
 
     return InlineKeyboardMarkup(buttons)
