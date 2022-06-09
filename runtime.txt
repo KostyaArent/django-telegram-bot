@@ -1,2 +1,1 @@
 python-3.9.2
-setuptools-59.1.1
