@@ -18,7 +18,7 @@ python manage.py createsuperuser --noinput
 
 # Collecting static
 echo "Collecting static ..."
-python manage.py collectstatic --noinput
+python manage.py collectstatic
 
 # Start server
 echo "Starting server ..."
