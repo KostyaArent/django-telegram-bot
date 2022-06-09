@@ -2,8 +2,7 @@
 
 # Apply database migrations
 echo "Applying database migrations ..."
-python manage.py makemigrations --noinput 
-#&& python manage.py migrate --noinput
+python manage.py makemigrations --noinput && python manage.py migrate --noinput
 
 # Create superuser
 echo "Creating superuser ..."
