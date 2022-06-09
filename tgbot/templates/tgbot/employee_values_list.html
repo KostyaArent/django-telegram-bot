@@ -1,0 +1,33 @@
+{% extends 'tgbot/base.html' %}
+
+{% block content %}
+<div class="row g-4">
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+  <div class="col-12">
+     <div class="bg-light rounded h-100 p-4">
+         <h6 class="mb-4">Ценности кандидатов</h6>
+         <div class="table-responsive">
+             <table class="table table-hover">
+                 <thead>
+                     <tr>
+                         <th scope="col">Название</th>
+                     </tr>
+                 </thead>
+                 <tbody>
+{% for emp_value in emp_values %}
+                     <tr data-href="{% url 'tgbot:employee_values_update' emp_value.pk %}">
+                         <td>{{ emp_value.title }}</td>
+                     </tr>
+{% endfor %}
+                 </tbody>
+             </table>
+<a class="btn btn-outline-secondary m-2" href="{% url 'tgbot:employee_values_create' %}">Добавить</a>
+         </div>
+     </div>
+ </div>
+</div>
+</div>
+</div>
+<!-- User's own End -->
+{% endblock %}

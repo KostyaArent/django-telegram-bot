@@ -1,0 +1,45 @@
+{% extends 'tgbot/base.html' %}
+
+{% block content %}
+<div class="row g-4">
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+  <div class="col-12">
+     <div class="bg-light rounded h-100 p-4">
+         <h6 class="mb-4">Кандидаты</h6>
+         <div class="table-responsive">
+             <table class="table table-hover">
+                 <thead>
+                     <tr>
+                         <th scope="col">№</th>
+                         <th scope="col">Название</th>
+                         <th scope="col">Описание</th>
+                         <th scope="col">Активна</th>
+                     </tr>
+                 </thead>
+                 <tbody>
+{% for vacancy in vacancies %}
+                     <tr data-href="{% url 'tgbot:vacancy_detail' vacancy.pk %}">
+                         <th scope="row">{{ vacancy.pk }}</th>
+                         <td>{{ vacancy.title }}</td>
+                         <td>{{ vacancy.description }}</td>
+                         <td>
+                         {% if vacancy.is_active %} 
+                            Да 
+                        {% else %} 
+                            Нет 
+                        {% endif %}
+                        </td>
+                     </tr>
+{% endfor %}
+                 </tbody>
+             </table>
+<a class="btn btn-outline-secondary m-2" href="{% url 'tgbot:vacancy_create' %}">Добавить</a>
+         </div>
+     </div>
+ </div>
+</div>
+</div>
+</div>
+<!-- User's own End -->
+{% endblock %}

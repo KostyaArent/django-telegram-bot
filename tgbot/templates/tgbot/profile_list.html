@@ -1,43 +1,12 @@
 {% extends 'tgbot/base.html' %}
 
 {% block content %}
-
-<div class="navbar-nav align-items-center ms-auto">
-    <form action="{% url 'profile_list' %}" method="get" id="sortProductById">
-        <input type="hidden" name="orderby" value="status" />
-    </form>
-    <form action="{% url 'profile_list' %}" method="get" id="sortProductByPrice">
-        <input type="hidden" name="orderby" value="salary_await"/>
-    </form>
-    <form action="{% url 'profile_list' %}" method="get" id="sortProductByPriceB">
-        <input type="hidden" name="orderby" value="-salary_await"/>
-    </form>
-
-    <div class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-            <!-- <i class="fa fa-envelope me-lg-2"></i>                 -->
-            <span class="d-none d-lg-inline-flex">Сортировка</span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-            <a class="dropdown-item" href="#" title="Сброс сортировки" onclick="document.getElementById('sortProductById').submit();">По статусу</a>
-            <a class="dropdown-item" href="#" title="Сортировка по возрастанию цены" onclick="document.getElementById('sortProductByPrice').submit();">Дешевле</a>
-            <a class="dropdown-item" href="#" title="Сортировка по убыванию цены" onclick="document.getElementById('sortProductByPriceB').submit();">Дороже</a>       
-        </div>
-    </div>
-</div>
-
+<div class="row g-4">
 <div class="container-fluid pt-4 px-4">
-
-
-
-
     <div class="row g-4">
   <div class="col-12">
      <div class="bg-light rounded h-100 p-4">
          <h6 class="mb-4">Кандидаты</h6>
-
-
-
          <div class="table-responsive">
              <table class="table table-hover">
                  <thead>
@@ -55,7 +24,7 @@
                  </thead>
                  <tbody>
 {% for profile in profiles %}
-                     <tr data-href="{% url 'profile_detail' profile.pk %}">
+                     <tr data-href="{% url 'tgbot:profile_detail' profile.pk %}">
                          <th scope="row">{{ profile.pk }}</th>
                          <td>{{ profile.get_status_display }}</td>
                          <td>{{ profile.name_family }}</td>
@@ -78,6 +47,45 @@
          </div>
      </div>
  </div>
+</div>
+</div>
+<div class="d-flex align-items-center justify-content-center mb-4">
+    <div class="bg-light rounded h-100 p-4">
+    <div class="nav-item">
+        <p class="nav-item">
+            <span class="d-none d-lg-inline-flex">Фильтры</span>
+        </p>
+    </div>
+
+    <div class="nav-item dropdown">
+        <form method="get" action="{% url 'tgbot:profile_list' %}">
+            <select class="form-select" name="status"> <!--Supplement an id here instead of using 'name'-->
+                {% for stat in statuses %}   
+                    {% if stat.0 == status %}                 
+                        <option value="{{stat.0}}" selected>{{stat.1}}</option>
+                    {% else %}
+                        <option value="{{stat.0}}">{{stat.1}}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            <select class="form-select" name="vacancy"> <!--Supplement an id here instead of using 'name'-->
+                {% for vac in vacancies %}
+                    {% if vac.id == vacancy %}  
+                        <option value="{{vac.id}}" selected>{{vac.title}}</option>
+                    {% else %}
+                        <option value="{{vac.id}}">{{vac.title}}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            <div>
+                <input class="btn btn-outline-secondary m-2" type="submit" name="submit" value="Применить"/>
+            
+                <a class="btn btn-outline-secondary m-2" href="{% url 'tgbot:profile_export' %}?{% for prof in profiles %}profs={{prof.pk}}&{% endfor %}">Скачать XLSX</a>
+            </div>
+        </form>
+    </div>
+    </div>
+
 </div>
 </div>
 <!-- User's own End -->

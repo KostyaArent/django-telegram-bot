@@ -1,0 +1,20 @@
+{% extends 'tgbot/base.html' %}
+
+
+{% block content %}
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+      <div class="col-sm-12 col-xl-6">
+        <div class="bg-light rounded h-100 p-4">
+          <form enctype="multipart/form-data" method="post">
+            <h6 class="mb-4">Создание ценности</h6>
+            <hr>
+              {% csrf_token %}
+              {{form.as_p}}
+              <input type="submit" class="btn btn-outline-secondary m-2" value="Добавить">
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

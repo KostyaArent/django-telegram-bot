@@ -20,7 +20,7 @@ from tgbot.handlers.wpassist.static_text import (
     send_phone, exp_question, exp_period,
     story, em_val_select, salary_question,
     more_val, custom_emp_val, end, new_work,
-    status_question
+    status_question, in_progress
     )
 
 from tgbot.handlers.wpassist.keyboards import (
@@ -29,7 +29,7 @@ from tgbot.handlers.wpassist.keyboards import (
     send_wpassist_create_keyboard,
     exp_select_keyboard
     )
-from tgbot.models import User, Profile, Vacancy, Experience, EmployeeValues, Experience
+from tgbot.models import User, Profile, Vacancy, Experience, EmployeeValues
 
 NICKNAME, VACANCY, CONFIRMATION, NEXT, TEAMMATE_GAME, SEND, PHONE, EXPERIENCE, WORK_STATUS, EMP_VALUES, SELF_WORK, UNIQ_VALUE, SALARY, WORK_STORY = range(14)
 
@@ -68,10 +68,18 @@ def in_search_on(update: Update, context: CallbackContext) -> None:
 # Profile_handler start
 def edit(update: Update, context: CallbackContext) -> Callable:
     user = User.get_user(update, context)
+    profile = Profile.objects.get(user=user)
+    if profile.stage.id != 1:
+        update.message.reply_text(
+        in_progress,
+        reply_markup=telegram.ReplyKeyboardRemove(),
+    )
+        return ConversationHandler.END
     update.message.reply_text(
         nick_name,
         reply_markup=telegram.ReplyKeyboardRemove(),
     )
+    print('kb remive')
     return NICKNAME
 
 
@@ -120,14 +128,6 @@ def vacancy(update: Update, context: CallbackContext) -> Callable:
     bot = context.bot
     user_data = context.user_data
     user_data['vacancy'] = query.data
-    # user = User.get_user(update, context)
-    # user_vacancy = Vacancy.objects.get(id=int(query.data))
-    # prof, _ = Profile.objects.get_or_create(
-    #     user=user,
-    # )
-    # # exp = Experience.objects.create(vacancy=user_vacancy,standing=Experience.CHOICES[])
-    # prof.vacancy = user_vacancy
-    # prof.save()
     bot.send_message(user.user_id, exp_question, reply_markup=exp_select_keyboard())
     
     return EXPERIENCE
@@ -183,13 +183,16 @@ def work_status(update: Update, context: CallbackContext) -> Callable:
 def self_work(update: Update, context: CallbackContext):
     bot = context.bot
     user = User.get_user(update, context)
+    print(update.message.text)
     if update.message.text == 'Да':
+        print('Работный')
         update.message.reply_text(
             status_question,
             reply_markup=telegram.ReplyKeyboardRemove(),
         )
         return WORK_STORY
     elif update.message.text == 'Нет':
+        print('Безработный')
         prof, _ = Profile.objects.get_or_create(user=user)
         prof.working = "Безработный"
         prof.save() 
@@ -259,10 +262,11 @@ def salary(update: Update, context: CallbackContext) -> Callable:
     user = User.get_user(update, context)
     prof, _ = Profile.objects.get_or_create(user=user)
     prof.salary_await = update.message.text
-    prof.status = '0'
     prof.save()
+    prof.change_status('2')
+    print('prof is save')    
     bot = context.bot
-    bot.send_message(user.user_id, end, reply_markup=telegram.ReplyKeyboardRemove())
+    bot.send_message(chat_id=user.user_id, text=end)
     return ConversationHandler.END
 
 

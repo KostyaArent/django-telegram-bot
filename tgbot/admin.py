@@ -4,8 +4,11 @@ from django.shortcuts import render
 
 from dtb.settings import DEBUG
 
-from tgbot.models import Location, Vacancy, Profile, EmployeeValues, Experience
-from tgbot.models import User
+from tgbot.models import (
+    Location, Vacancy, Profile, 
+    EmployeeValues, Experience, User,
+    ProfileStatusHistory, ProfileStatuses
+)
 from tgbot.forms import BroadcastForm
 
 from tgbot.tasks import broadcast_message
@@ -62,8 +65,15 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ['user', 'name_family', 'working', 'salary_await', 'emp_values', 'exp']
 
 
+class ProfileStatusHistoryAdmin(admin.ModelAdmin):
+    list_display = ['__str__']
+    readonly_fields=('date',)
+
+
 admin.site.register(Vacancy, VacancyAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(EmployeeValues)
 admin.site.register(Experience)
+admin.site.register(ProfileStatusHistory, ProfileStatusHistoryAdmin)
+admin.site.register(ProfileStatuses)
 

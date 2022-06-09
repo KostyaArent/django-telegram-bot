@@ -24,7 +24,8 @@ SECRET_KEY = os.getenv(
     'x%#3&%giwv8f0+%r946en7zd;kfzjhoi;3j=0y4j3lsjZNGD;onhw2p9',
 )
 
-DEBUG = not not os.getenv("DJANGO_DEBUG", False)
+DEBUG = (os.environ.get('DJANGO_DEBUG') == "True")
+#DEBUG = not not os.getenv("DJANGO_DEBUG", False)
 # DEBUG = True
 
 ALLOWED_HOSTS = ["*"]  # since Telegram uses a lot of IPs for webhooks
@@ -37,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'import_export',
 
     # 3rd party apps
     'django_celery_beat',
@@ -234,3 +237,6 @@ LOGGING = {
 #     # django.contrib.auth) you may enable sending PII data.
 #     send_default_pii=True
 # )
+
+LOGOUT_REDIRECT_URL = 'tgbot:signin'
+LOGIN_URL = 'tgbot:signin'

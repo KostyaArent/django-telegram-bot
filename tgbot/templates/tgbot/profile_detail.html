@@ -1,18 +1,33 @@
 {% extends 'tgbot/base.html' %}
 
 {% block content %}
+<style type="text/css">
+    .custom_container{
+        display: inline-flex;
+        position: relative;
+    }
+    .custom_box{
+        white-space:nowrap
+    }
+    .custom_box div{
+        display:inline-flex;
+    }
+    .col-xl-6{
+        padding-right: 0;
+        padding-left: 0;
+    }
+</style>
 <div class="container-fluid pt-4 px-4">
     <div class="row g-4">
-<!-- User's own Start -->
 
-      <div class="col-sm-12 col-xl-6">
+      <div class="col-sm-12 col-xl-6 col-xl-6">
         <div class="bg-light rounded h-100 p-4">
 
            <h6 class="mb-4">Анкета {{ profile.name_family }}</h6>
            <hr>
            <dl class="row mb-0">
-                <dt class="col-sm-4">Статус</dt>
-               <dd class="col-sm-8"><strong>{{ profile.get_status_display }}</strong></dd>
+                <dt class="col-sm-4">Текущий этап</dt>
+               <dd class="col-sm-8"><strong>{{ profile.stage.title }}</strong></dd>
 
                <dt class="col-sm-4">Телеграм</dt>
                <dd class="col-sm-8">{{ profile.user }}</dd>
@@ -33,18 +48,74 @@
                <dd class="col-sm-8">{{ profile.emp_values|safe }}</dd>
 
                <dt class="col-sm-4">Опыт:</dt>
-               <dd class="col-sm-8">{{ profile.exp|safe }}</dd>
+               <dd class="col-sm-8"><ul>{{ profile.exp|safe }}</ul></dd>
 
-               <dt class="col-sm-4">Edited date:</dt>
-               <dd class="col-sm-8">{{ profile.changed_date }}</dd>
 
-               <dt class="row-sm-4">Photos:</dt>
-
+               <hr>
+               <dt class="col-sm-4">Комментарий:</dt>
+               <dd class="col-sm-8">
+                <form action="{% url 'tgbot:profile_add_comment' profile.pk %}"enctype="multipart/form-data" method="post">
+                    {% csrf_token %}
+                    <textarea rows = "5" cols = "30" placeholder="Заметки по анкете" name = "profile_comment">{% if profile.hr_comment %}{{ profile.hr_comment }}{% endif %}</textarea>
+                    <br>
+                    <br>           
+                    <input type="submit" class="btn btn-outline-secondary m-2" value="Сохранить">
+                </form>
+               </dd>
+               <br>             
            </dl>
            <hr>
+           <h6 class="mb-4">Следующий этап</h6>
+           <div class="custom_container">
+            <div class="custom_box">
+            {% for stage in profile.stage.next_statuses.all %}
+            <div>
+            <form action="{% url 'tgbot:profile_action' profile.pk %}"enctype="multipart/form-data" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="{{stage.id}}">                
+                <input type="submit" class="btn btn-outline-secondary m-2" value="{{stage.title}}">
+            </form>
+            </div>
+            {% endfor %}
+            </div>
+            </div>
        </div>
+    </div>
+    <div class="col-sm-12 col-xl-6">
+        <div class="bg-light rounded h-100 p-4">
+            <h6 class="mb-4">Комментарий к текущему этапу</h6>
+            <hr>
+            <form action="{% url 'tgbot:stage_add_comment' profile.stage.pk %}"enctype="multipart/form-data" method="post">
+                {% csrf_token %}
+                <textarea rows = "5" cols = "60" placeholder="Опиши результат этапа" name="stage_comment">{% if profile.get_current_stage.comment %}{{ profile.get_current_stage.comment }}{% endif %}</textarea>
+                <br>
+                <br>  
+                <input type="hidden" name="stage_id" value="{{profile.get_current_stage.id}}">             
+                <input type="submit" class="btn btn-outline-secondary m-2" value="Сохранить">
+            </form>
+                           <hr>
+               <h6 class="mb-4">История</h6>
+               <div class="accordion" id="accordionExample">
+                {% for object in statuses|dictsortreversed:'date' %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading{{object.id}}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{object.id}}" aria-expanded="false" aria-controls="collapse{{object.id}}">
+                                {{object.stage.title}}
+                            </button>
+                        </h2>
+                        <div id="collapse{{object.id}}" class="accordion-collapse collapse" aria-labelledby="heading{{object.id}}" data-bs-parent="#accordionExample" style="">
+                            <div class="accordion-body">
+                                <ul>Старт этапа: {{ object.date }}</ul>
+                                {% if object.return_date %}<ul>Возврат на этап: {{ object.return_date }}</ul>{% endif %}
+                                <ul>Комментарий: {% if object.comment %}{{ object.comment }}{% else %}Нет комментария{% endif %}</ul>
+                                <ul>Исполнитель: {{ object.performer.first_name }} {{ object.performer.last_name }}</ul>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>  
+        </div>
     </div>
   </div>
 </div>
-<!-- User's own End -->
 {% endblock %}

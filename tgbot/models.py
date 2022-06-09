@@ -4,6 +4,11 @@ from typing import Union, Optional, Tuple
 
 from django.db import models
 from django.db.models import QuerySet, Manager
+from django.urls import reverse
+from django.contrib.auth.models import User as StUser
+
+from datetime import datetime
+
 from telegram import Update
 from telegram.ext import CallbackContext
 
@@ -98,14 +103,17 @@ class Vacancy(models.Model):
     title = models.CharField(
         max_length=20,
         unique=True,
-        verbose_name='Vacancy',
+        verbose_name='Название',
     )
-    is_active = models.BooleanField(default=False)
-    description = models.TextField(default="Нет описания")
+    is_active = models.BooleanField(default=False, verbose_name='Активна')
+    description = models.TextField(default="Нет описания", verbose_name='Описание')
 
     class Meta:
         verbose_name = "Вакансия"
         verbose_name_plural = "Вакансии"
+
+    def get_absolute_url(self):
+        return reverse('tgbot:vacancy_detail', kwargs={'pk':self.pk})
 
     def __str__(self):
         return self.title
@@ -138,8 +146,8 @@ class Experience(models.Model):
 
 
 class EmployeeValues(models.Model):
-    title = models.TextField(max_length=200)
-    is_base = models.BooleanField(default=False)
+    title = models.TextField(max_length=200, verbose_name='Название')
+    is_base = models.BooleanField(default=False, verbose_name='Выводится всем')
     users = models.ManyToManyField(User, blank=True)
 
     def __str__(self):
@@ -150,20 +158,56 @@ class EmployeeValues(models.Model):
         verbose_name_plural = 'Ценности'
 
 
-
-class Profile(models.Model):
-    STATUCES = (
-        ('0', 'Новая'),
-        ('1', 'В работе'),
-        ('2', 'На собеседовании'),
-        ('3', 'В архиве'),
-        ('9', 'Незавершенная'),
+class ProfileStatuses(models.Model):
+    title = models.CharField(
+        verbose_name='Название этапа',
+        max_length=20,
+        unique=True
+        )
+    description = models.TextField(
+        verbose_name='Описание этапа',
+        blank=True,
+        null=True
+    )
+    next_statuses = models.ManyToManyField(
+        'self',
+        null=True,
+        blank=True,
+        symmetrical=False,
+        verbose_name='Следующие этапы'
+    )
+    priority = models.IntegerField(
+        verbose_name='Приоритет',
+        blank=True,
+        null=True
     )
 
+    class Meta:
+        verbose_name = 'Этап'
+        verbose_name_plural = 'Этапы'
+
+    def __str__(self):
+        return f'{self.pk} {self.title}'
+
+
+class Profile(models.Model):
+    STATUSES = (
+        ('0', 'Не обработано'),
+        ('1', 'Недозвон'),
+        ('2', 'Первичное собеседование'),
+        ('3', 'Пробный день'),
+        ('4', 'Итоговое собеседование'),
+        ('5', 'Оформление'),
+        ('6', 'Самоотказ'),
+        ('7', 'Отказ от рекрутера'),
+        ('8', 'Резерв'),
+        ('9', 'Незавершенная'),
+    )
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
         primary_key=True,
+        verbose_name='Пользователь'
     )
     name_family = models.TextField(
         verbose_name='Имя Фамилия',
@@ -174,12 +218,6 @@ class Profile(models.Model):
         verbose_name='Номер телефона',
         blank=True,
     )
-    experience = models.ForeignKey(
-        Experience,
-        verbose_name='Опыт',
-        on_delete=models.PROTECT,
-        null = True,
-    )
     working = models.TextField(
         verbose_name='Статус занятости',
         blank=True,
@@ -188,18 +226,37 @@ class Profile(models.Model):
         verbose_name='Зарплатные ожидания',
         blank=True,
     )
-
     status = models.CharField(
         verbose_name='Статус анкеты',
         blank=True, 
         null=True,
         max_length=300, 
-        choices = STATUCES,
+        choices = STATUSES,
         default='9'
     )
+    hr_comment = models.TextField(
+        verbose_name='Комментарий',
+        blank=True,
+        null=True
+    )
+    stage = models.ForeignKey(
+        ProfileStatuses,
+        models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name='Тру статус'
+    )
+
+    class Meta:
+        verbose_name = 'Профайл'
+        verbose_name_plural = 'Профайлы'
+        ordering = ['status']
+
+    def get_absolute_url(self):
+        return reverse('tgbot:profile_detail', kwargs={'pk':self.pk})
 
     def __str__(self):
-        return self.user.username
+        return str(self.user.username)
 
     @property
     def emp_values(self):
@@ -210,11 +267,99 @@ class Profile(models.Model):
     def exp(self):
         """Returned html list"""
         exps = Experience.objects.filter(user__pk=self.user.user_id)
-        experience = "".join([f'<li>{exp.vacancy}: {[ith[1] for ith in Experience.CHOICES if ith[0]==exp.standing][0]}</li>' if exp.standing is not None else f'<li>{exp.vacancy}: Без опыта</li>' for exp in exps]) if exps is not None else "Без опыта"
-        print(experience)
+        experience = "".join(
+            [f'<li>{exp.vacancy}: {[ith[1] for ith in Experience.CHOICES if ith[0]==exp.standing][0]}\
+            </li>' if exp.standing is not None else f'<li>{exp.vacancy}: Без опыта</li>' for exp in exps]
+            ) if exps is not None else "Без опыта"
         return experience
 
+    @property
+    def get_exp_query(self):
+        exps = Experience.objects.filter(user__pk=self.user.user_id)
+        return exps
+
+    def change_status(self, status, current_stage=None, user=None):
+        #print(current_stage.performer)
+        print(user)
+        if current_stage and user:
+            current_stage.performer = user
+            current_stage.save()
+            print(current_stage.performer)
+            print('User set on current_stage')
+        stage = ProfileStatuses.objects.filter(pk=int(status)).first()
+        self.stage = stage
+        print('self status chanched')
+        self.save()
+        print('self status saved')
+        prof_hist, created = ProfileStatusHistory.objects.get_or_create(
+            profile=self, 
+            stage=stage
+            )
+        if not created:
+            prof_hist.return_date = datetime.now()
+            prof_hist.save()
+
+        print('Func status is OK')
+
+    def get_statuses_history_set(self):
+        history_set = ProfileStatusHistory.objects.filter(profile=self).order_by('date')
+        return history_set
+
+    def get_current_stage(self):
+        current_stage = ProfileStatusHistory.objects.get(stage=self.stage)#.order_by('-date')[:1][0]
+        return current_stage
+
+
+class ProfileStatusHistory(models.Model):
+
+    profile = models.ForeignKey(
+        Profile, 
+        on_delete=models.CASCADE,
+        verbose_name='Профайл'
+    )
+    status = models.CharField(
+        verbose_name='Статус анкеты',
+        blank=True, 
+        null=True,
+        max_length=300, 
+        choices = Profile.STATUSES
+    )
+    comment = models.TextField(
+        verbose_name='Комментарий',
+        blank=True,
+        null=True
+    )
+    date = models.DateTimeField(
+        verbose_name='Дата',
+        auto_now_add=True, 
+        blank=True
+    )
+    return_date = models.DateTimeField(
+        verbose_name='Дата возврата',
+        blank=True,
+        null=True
+    )
+    stage = models.ForeignKey(
+        ProfileStatuses,
+        models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name='Тру статус'
+    )
+    performer = models.ForeignKey(
+        StUser,
+        models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name='Исполнитель'
+        )
+
+    def __str__(self):
+        return f'{self.stage} {self.profile} {self.performer} {self.date}'
+
     class Meta:
-        verbose_name = 'Профайл'
-        verbose_name_plural = 'Профайлы'
-        ordering = ['status']
+        verbose_name = 'История'
+        verbose_name_plural = 'Истории'
+        ordering = ['profile', 'date']
+
+

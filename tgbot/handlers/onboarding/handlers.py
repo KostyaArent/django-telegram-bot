@@ -12,14 +12,18 @@ from tgbot.handlers.onboarding.keyboards import (
     make_keyboard_for_wp_assist_start
     )
 from tgbot.handlers.wpassist.keyboards import send_wpassist_create_keyboard
+from tgbot.models import User, Profile
 
 
 def command_start(update: Update, context: CallbackContext) -> None:
-    u, created = User.get_user_and_created(update, context)
-    if created:
-        text = static_text.start_created.format(first_name=u.first_name)
+    user, us_create = User.get_user_and_created(update, context)
+    profile, pr_created = Profile.objects.get_or_create(user=user)
+    if us_create:
+        print(profile)
+        profile.change_status('1')
+        text = static_text.start_created.format(first_name=user.first_name)
     else:
-        text = static_text.start_not_created.format(first_name=u.first_name)
+        text = static_text.start_not_created.format(first_name=user.first_name)
     update.message.reply_text(
         text=text,
         reply_markup=make_keyboard_for_start_command()
