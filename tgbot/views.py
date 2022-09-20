@@ -51,8 +51,6 @@ class TelegramBotWebhookView(View):
             # You can run all of these services via docker-compose.yml
             process_telegram_event.delay(json.loads(request.body))
 
-        # TODO: there is a great trick to send action in webhook response
-        # e.g. remove buttons, typing event
         return JsonResponse({"ok": "POST request processed"})
 
     def get(self, request, *args, **kwargs):  # for debug
@@ -61,7 +59,6 @@ class TelegramBotWebhookView(View):
 
 class Cabinet(LoginRequiredMixin, TemplateView):
     template_name = 'tgbot/cabinet.html'
-    # login_url = 'signin'
 
     def get(self, request):
         return render(request, 'tgbot/cabinet.html', {'context': self.get_context_data()})
@@ -118,8 +115,8 @@ class ProfilelListView(LoginRequiredMixin, ListView):
         st_tuple = (('all', 'Все'),)
         statuses = Profile.STATUSES + st_tuple
         context['statuses'] = statuses
-        vacancies = [{'id':str(it.id), 'title':it.title} for it in Vacancy.objects.all()]
-        vacancies.append({'id':'-1', 'title':'Все'})
+        vacancies = [{'id': str(it.id), 'title': it.title} for it in Vacancy.objects.all()]
+        vacancies.append({'id': '-1', 'title': 'Все'})
         context['vacancies'] = vacancies
         return context
 
@@ -136,8 +133,6 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
 
 
 class ProfileActionView(LoginRequiredMixin, View):
-    #model = Profile
-
     def post(self, request, pk):
         status = self.request.POST.get('status', '')
         statuses = [el.id for el in ProfileStatuses.objects.all()]
@@ -156,9 +151,6 @@ class ProfileActionView(LoginRequiredMixin, View):
 def export_profiles_to_xlsx(request):
     prof_ids = request.GET.getlist('profs', '')
     prof_ids = [int(prof) for prof in prof_ids]
-    """
-    Downloads filtred Profiles as Excel file with a single worksheet
-    """
     profile_queryset = Profile.objects.filter(user__user_id__in=prof_ids)
     
     response = HttpResponse(
@@ -168,12 +160,9 @@ def export_profiles_to_xlsx(request):
         date=datetime.now().strftime('%Y-%m-%d'),
     )
     workbook = Workbook()
-    
-    # Get active worksheet/tab
     worksheet = workbook.active
     worksheet.title = 'Candidates'
 
-    # Define the titles for columns
     columns = [
         'UserTG',
         'Name Family',
@@ -186,16 +175,13 @@ def export_profiles_to_xlsx(request):
     ]
     row_num = 1
 
-    # Assign the titles for each cell of the header
     for col_num, column_title in enumerate(columns, 1):
         cell = worksheet.cell(row=row_num, column=col_num)
         cell.value = column_title
 
-    # Iterate through all movies
     for profile in profile_queryset:
         row_num += 1
         
-        # Define the data for each cell in the row 
         row = [
             profile.pk,
             profile.name_family,
@@ -207,7 +193,6 @@ def export_profiles_to_xlsx(request):
             strip_tags(profile.exp)
         ]
         
-        # Assign the data for each cell of the row 
         for col_num, cell_value in enumerate(row, 1):
             cell = worksheet.cell(row=row_num, column=col_num)
             cell.value = cell_value

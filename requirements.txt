@@ -13,7 +13,6 @@ django-debug-toolbar
 whitenoise
 openpyxl
 django-timezone-field==5.0
-setuptools==59.1.1
 
 # Django 3.2 async requirements
 gunicorn==20.1.0
@@ -27,7 +26,7 @@ psycopg2-binary
 dj-database-url
 
 # Distributed tasks
-celery==5.2.3
+celery==5.2.7
 redis
 django-celery-beat
 

@@ -1,7 +1,6 @@
 from django.urls import path, include
 from django.views.decorators.csrf import csrf_exempt
 
-
 from . import views
 
 
@@ -11,7 +10,7 @@ urlpatterns = [
     # Just empty index for check
     path('', views.index, name="index"),
 
-    # BOT CABINET
+    # Bot cabinet
     path('cabinet/', views.Cabinet.as_view(), name='cabinet'),
     path('profile_list/', views.ProfilelListView.as_view(), name='profile_list'),
     path('profiles/<int:pk>/', views.ProfileDetailView.as_view(),  name='profile_detail'),
@@ -32,12 +31,11 @@ urlpatterns = [
     # Profs export
     path('profiles/export', views.export_profiles_to_xlsx, name='profile_export'),
 
-    # AUTH
+    # Auth
     path('signin/', views.SignInView.as_view(), name='signin'),
     path('logout/', views.LogoutView.as_view(), name='logout'),
 
-
-    # TODO: make webhook more secure
+    # Need more secure
     path('super_secter_webhook/', csrf_exempt(views.TelegramBotWebhookView.as_view())),
 ]
 

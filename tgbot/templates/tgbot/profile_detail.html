@@ -72,8 +72,8 @@
             <div>
             <form action="{% url 'tgbot:profile_action' profile.pk %}"enctype="multipart/form-data" method="post">
                 {% csrf_token %}
-                <input type="hidden" name="status" value="{{stage.id}}">                
-                <input type="submit" class="btn btn-outline-secondary m-2" value="{{stage.title}}">
+                <input type="hidden" name="status" value="{{stage.id}}">
+                <input type="submit" class="btn btn-outline-secondary m-2" value="{{stage}}">
             </form>
             </div>
             {% endfor %}

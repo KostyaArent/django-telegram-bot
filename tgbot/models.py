@@ -113,7 +113,7 @@ class Vacancy(models.Model):
         verbose_name_plural = "Вакансии"
 
     def get_absolute_url(self):
-        return reverse('tgbot:vacancy_detail', kwargs={'pk':self.pk})
+        return reverse('tgbot:vacancy_detail', kwargs={'pk': self.pk})
 
     def __str__(self):
         return self.title
@@ -131,12 +131,13 @@ class Experience(models.Model):
         verbose_name='Должность',
         on_delete=models.CASCADE,
         )
-    standing = models.CharField(max_length=300, choices = CHOICES, null=True)
+    standing = models.CharField(max_length=300, choices=CHOICES, null=True)
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         null=True
     )
+
     def __str__(self):
         return self.vacancy.title
 
@@ -231,7 +232,7 @@ class Profile(models.Model):
         blank=True, 
         null=True,
         max_length=300, 
-        choices = STATUSES,
+        choices=STATUSES,
         default='9'
     )
     hr_comment = models.TextField(
@@ -253,7 +254,7 @@ class Profile(models.Model):
         ordering = ['status']
 
     def get_absolute_url(self):
-        return reverse('tgbot:profile_detail', kwargs={'pk':self.pk})
+        return reverse('tgbot:profile_detail', kwargs={'pk': self.pk})
 
     def __str__(self):
         return str(self.user.username)
@@ -279,7 +280,6 @@ class Profile(models.Model):
         return exps
 
     def change_status(self, status, current_stage=None, user=None):
-        #print(current_stage.performer)
         print(user)
         if current_stage and user:
             current_stage.performer = user
@@ -299,14 +299,12 @@ class Profile(models.Model):
             prof_hist.return_date = datetime.now()
             prof_hist.save()
 
-        print('Func status is OK')
-
     def get_statuses_history_set(self):
         history_set = ProfileStatusHistory.objects.filter(profile=self).order_by('date')
         return history_set
 
     def get_current_stage(self):
-        current_stage = ProfileStatusHistory.objects.get(stage=self.stage)#.order_by('-date')[:1][0]
+        current_stage = ProfileStatusHistory.objects.get(stage=self.stage)  # .order_by('-date')[:1][0]
         return current_stage
 
 
@@ -322,7 +320,7 @@ class ProfileStatusHistory(models.Model):
         blank=True, 
         null=True,
         max_length=300, 
-        choices = Profile.STATUSES
+        choices=Profile.STATUSES
     )
     comment = models.TextField(
         verbose_name='Комментарий',
@@ -361,5 +359,3 @@ class ProfileStatusHistory(models.Model):
         verbose_name = 'История'
         verbose_name_plural = 'Истории'
         ordering = ['profile', 'date']
-
-

@@ -79,7 +79,6 @@ def edit(update: Update, context: CallbackContext) -> Callable:
         nick_name,
         reply_markup=telegram.ReplyKeyboardRemove(),
     )
-    print('kb remive')
     return NICKNAME
 
 
@@ -100,7 +99,6 @@ def nickname(update: Update, context: CallbackContext) -> Callable:
 
 def phone(update: Update, context: CallbackContext) -> Callable:
     num = ''.join(re.split('\D+', update.message.text))
-    print(num)
     if 9<len(str(num))<12:
         u = User.get_user(update, context)
         chat_id = update.message.chat_id
@@ -134,16 +132,11 @@ def vacancy(update: Update, context: CallbackContext) -> Callable:
 
 
 def experience(update: Update, context: CallbackContext) -> Callable:
-    print('!!!!!!!!!!')
     user_data = context.user_data
-    # query = update.callback_query
-    print(user_data['vacancy'])
     chat_id = update.message.chat_id
     user = User.get_user(update, context)
     if update.message.text == 'Да':
-        experience = [{'id':exp[0], 'title':exp[1]} for exp in Experience.CHOICES]
-        # user_data['experience'] = query.data
-        # print(user_data['experience'])
+        experience = [{'id': exp[0], 'title':exp[1]} for exp in Experience.CHOICES]
         update.message.reply_text(
             exp_period,
             reply_markup=build_keyboard(experience, 'title', 'id')
@@ -183,21 +176,16 @@ def work_status(update: Update, context: CallbackContext) -> Callable:
 def self_work(update: Update, context: CallbackContext):
     bot = context.bot
     user = User.get_user(update, context)
-    print(update.message.text)
     if update.message.text == 'Да':
-        print('Работный')
         update.message.reply_text(
             status_question,
             reply_markup=telegram.ReplyKeyboardRemove(),
         )
         return WORK_STORY
     elif update.message.text == 'Нет':
-        print('Безработный')
         prof, _ = Profile.objects.get_or_create(user=user)
         prof.working = "Безработный"
-        prof.save() 
-        # user_data = context.user_data
-        # user_vacancy = Vacancy.objects.get(id=int(user_data['vacancy']))
+        prof.save()
         vals = list(EmployeeValues.objects.filter(is_base=True).values('id', 'title'))
         vals.append({'id':'Другое', 'title':'Другое'})
         bot.send_message(user.user_id, em_val_select, reply_markup=build_keyboard(vals, 'title', 'id'))
@@ -264,7 +252,6 @@ def salary(update: Update, context: CallbackContext) -> Callable:
     prof.salary_await = update.message.text
     prof.save()
     prof.change_status('2')
-    print('prof is save')    
     bot = context.bot
     bot.send_message(chat_id=user.user_id, text=end)
     return ConversationHandler.END
