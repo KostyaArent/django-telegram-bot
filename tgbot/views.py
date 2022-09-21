@@ -100,7 +100,7 @@ class ProfilelListView(LoginRequiredMixin, ListView):
             queryset = Profile.objects.all()
             return queryset.order_by(order)
         queryset = Profile.objects.filter(
-            status=filter_val1,
+            stage=filter_val1,
             user__user_id__in=exps
         ) if filter_val1 != 'all' else Profile.objects.filter(
             user__user_id__in=exps
@@ -113,7 +113,7 @@ class ProfilelListView(LoginRequiredMixin, ListView):
         context['vacancy'] = self.request.GET.get('vacancy', 'all')
         context['orderby'] = self.request.GET.get('orderby', 'pk')
         st_tuple = (('all', 'Все'),)
-        statuses = Profile.STATUSES + st_tuple
+        statuses = ProfileStatuses.objects.all()
         context['statuses'] = statuses
         vacancies = [{'id': str(it.id), 'title': it.title} for it in Vacancy.objects.all()]
         vacancies.append({'id': '-1', 'title': 'Все'})
@@ -188,7 +188,7 @@ def export_profiles_to_xlsx(request):
             profile.phone,
             profile.working,
             profile.salary_await,
-            profile.get_status_display(),
+            profile.stage.title,
             profile.emp_values,
             strip_tags(profile.exp)
         ]

@@ -84,7 +84,6 @@ def edit(update: Update, context: CallbackContext) -> Callable:
 
 def nickname(update: Update, context: CallbackContext) -> Callable:
     u = User.get_user(update, context)
-    chat_id = update.message.chat_id
     user_data = context.user_data
     user_data['nickname'] = update.message.text
     prof, _ = Profile.objects.get_or_create(user=u)
@@ -101,7 +100,6 @@ def phone(update: Update, context: CallbackContext) -> Callable:
     num = ''.join(re.split('\D+', update.message.text))
     if 9<len(str(num))<12:
         u = User.get_user(update, context)
-        chat_id = update.message.chat_id
         user_data = context.user_data
         user_data['phone'] = num
         prof, _ = Profile.objects.get_or_create(user=u)
@@ -133,7 +131,6 @@ def vacancy(update: Update, context: CallbackContext) -> Callable:
 
 def experience(update: Update, context: CallbackContext) -> Callable:
     user_data = context.user_data
-    chat_id = update.message.chat_id
     user = User.get_user(update, context)
     if update.message.text == 'Да':
         experience = [{'id': exp[0], 'title':exp[1]} for exp in Experience.CHOICES]
@@ -159,7 +156,6 @@ def experience(update: Update, context: CallbackContext) -> Callable:
 
 def work_status(update: Update, context: CallbackContext) -> Callable:
     query = update.callback_query
-    user = User.get_user(update, context)
     user_data = context.user_data
     user_vacancy = Vacancy.objects.get(id=int(user_data['vacancy']))
     user = User.get_user(update, context)
@@ -167,8 +163,6 @@ def work_status(update: Update, context: CallbackContext) -> Callable:
     exp.standing = query.data
     exp.save()
     bot = context.bot
-    # vals = list(EmployeeValues.objects.filter(is_base=True).values('id', 'title'))
-    # vals.append({'id':'Другое', 'title':'Другое'})
     bot.send_message(user.user_id, new_work, reply_markup=exp_select_keyboard())
     return SELF_WORK
 

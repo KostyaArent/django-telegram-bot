@@ -36,5 +36,4 @@ def wp_assist(update: Update, context: CallbackContext) -> None:
     bot = context.bot
     bot.answer_callback_query(query.id)
     bot.editMessageReplyMarkup(user_id, query.message.message_id)
-    # bot.send_message(user_id, 'Отлично! Давайте начнем интервью?', reply_markup=send_go_keyboard())
     bot.send_message(user_id, 'Отлично! Давайте начнем интервью?', reply_markup=send_wpassist_create_keyboard())

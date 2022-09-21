@@ -4,8 +4,7 @@ from .models import User, Vacancy, EmployeeValues, ProfileStatusHistory
 
 from django.forms import (
     TextInput, IntegerField, ModelForm, Select, ClearableFileInput,
-    Textarea, ModelChoiceField, FileField, CheckboxInput
-    )
+    Textarea, ModelChoiceField, FileField, CheckboxInput)
 
 
 class BroadcastForm(forms.Form):

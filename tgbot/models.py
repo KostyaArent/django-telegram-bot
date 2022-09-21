@@ -192,18 +192,6 @@ class ProfileStatuses(models.Model):
 
 
 class Profile(models.Model):
-    STATUSES = (
-        ('0', 'Не обработано'),
-        ('1', 'Недозвон'),
-        ('2', 'Первичное собеседование'),
-        ('3', 'Пробный день'),
-        ('4', 'Итоговое собеседование'),
-        ('5', 'Оформление'),
-        ('6', 'Самоотказ'),
-        ('7', 'Отказ от рекрутера'),
-        ('8', 'Резерв'),
-        ('9', 'Незавершенная'),
-    )
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -227,14 +215,6 @@ class Profile(models.Model):
         verbose_name='Зарплатные ожидания',
         blank=True,
     )
-    status = models.CharField(
-        verbose_name='Статус анкеты',
-        blank=True, 
-        null=True,
-        max_length=300, 
-        choices=STATUSES,
-        default='9'
-    )
     hr_comment = models.TextField(
         verbose_name='Комментарий',
         blank=True,
@@ -245,13 +225,13 @@ class Profile(models.Model):
         models.SET_NULL,
         blank=True,
         null=True,
-        verbose_name='Тру статус'
+        verbose_name='Этап статус'
     )
 
     class Meta:
         verbose_name = 'Профайл'
         verbose_name_plural = 'Профайлы'
-        ordering = ['status']
+        ordering = ['stage']
 
     def get_absolute_url(self):
         return reverse('tgbot:profile_detail', kwargs={'pk': self.pk})
@@ -314,13 +294,6 @@ class ProfileStatusHistory(models.Model):
         Profile, 
         on_delete=models.CASCADE,
         verbose_name='Профайл'
-    )
-    status = models.CharField(
-        verbose_name='Статус анкеты',
-        blank=True, 
-        null=True,
-        max_length=300, 
-        choices=Profile.STATUSES
     )
     comment = models.TextField(
         verbose_name='Комментарий',
