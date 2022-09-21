@@ -62,9 +62,9 @@
             <select class="form-select" name="status"> <!--Supplement an id here instead of using 'name'-->
                 {% for stat in statuses %}   
                     {% if stat.0 == status %}                 
-                        <option value="{{stat.id}}" selected>{{stat.title}}</option>
+                        <option value="{{stat.0}}" selected>{{stat.1}}</option>
                     {% else %}
-                        <option value="{{stat.id}}">{{stat.title}}</option>
+                        <option value="{{stat.0}}">{{stat.1}}</option>
                     {% endif %}
                 {% endfor %}
             </select>

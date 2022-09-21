@@ -113,7 +113,7 @@ class ProfilelListView(LoginRequiredMixin, ListView):
         context['vacancy'] = self.request.GET.get('vacancy', 'all')
         context['orderby'] = self.request.GET.get('orderby', 'pk')
         st_tuple = (('all', 'Все'),)
-        statuses = ProfileStatuses.objects.all()
+        statuses = tuple((obj.id, obj.title) for obj in ProfileStatuses.objects.all()) + st_tuple
         context['statuses'] = statuses
         vacancies = [{'id': str(it.id), 'title': it.title} for it in Vacancy.objects.all()]
         vacancies.append({'id': '-1', 'title': 'Все'})
