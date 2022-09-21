@@ -23,11 +23,9 @@ Production-ready Telegram bot with database admin panel and a bunch of useful bu
 Built-in Telegram bot methods:
 * `/broadcast` — send message to all users (admin command)
 * `/export_users` — bot sends you info about your users in .csv file (admin command)
-* `/stats` — show basic bot stats
-* `/ask_for_location` — log user location when received and reverse geocode it to get country, city, etc.
 * `/go` — well play assist menu. Teammate Search Assistant.
 
-# Original
+# Based on
 Original project https://github.com/ohld/django-telegram-bot/
 
 ## Run locally using docker-compose
