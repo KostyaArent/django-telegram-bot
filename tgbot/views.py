@@ -77,7 +77,7 @@ class SignInView(View):
     def post(self, request):
         user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
         if user is None:
-            return render(request, 'tgbot/signin.html', {'form':CustomAuthForm(), 'error':'Account didn\'t found!'})
+            return render(request, 'tgbot/signin.html', {'form': CustomAuthForm(), 'error': 'Account didn\'t found!'})
         else:
             login(request, user)
             return redirect('tgbot:cabinet')
@@ -112,10 +112,9 @@ class ProfilelListView(LoginRequiredMixin, ListView):
         context['status'] = self.request.GET.get('status', 'all')
         context['vacancy'] = self.request.GET.get('vacancy', 'all')
         context['orderby'] = self.request.GET.get('orderby', 'pk')
-        st_tuple = (('all', 'Все'),)
-        statuses = tuple((obj.id, obj.title) for obj in ProfileStatuses.objects.all()) + st_tuple
+        statuses = (('all', 'Все'),) + tuple((obj.id, obj.title) for obj in ProfileStatuses.objects.all())
         context['statuses'] = statuses
-        vacancies = [{'id': str(it.id), 'title': it.title} for it in Vacancy.objects.all()]
+        vacancies = [{'id': str(item.id), 'title': item.title} for item in Vacancy.objects.all()]
         vacancies.append({'id': '-1', 'title': 'Все'})
         context['vacancies'] = vacancies
         return context
